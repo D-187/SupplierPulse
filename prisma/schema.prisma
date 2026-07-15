@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Supplier {
+  id        String          @id @default(cuid())
+  name      String
+  createdAt DateTime        @default(now())
+  snapshot  MetricSnapshot?
+}
+
+// One current snapshot per supplier. A new upload replaces the whole
+// dataset (Supplier + MetricSnapshot rows are wiped and reinserted) --
+// there is no per-supplier history, by design (see PRD section 4 & 6).
+model MetricSnapshot {
+  id         String   @id @default(cuid())
+  supplierId String   @unique
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  // Financial reliability
+  revenueGrowthRate      Float // % QoQ revenue growth; higher is better
+  paymentDelinquencyRate Float // % of dues settled late; lower is better
+  cashFlowStabilityScore Float // 0-100 input score; higher is better
+
+  // Operations
+  onTimeDeliveryRate   Float // %; higher is better
+  orderFulfillmentRate Float // %; higher is better
+  avgLeadTimeDays      Float // days; lower is better
+
+  // Quality
+  defectRate         Float // %; lower is better
+  customerReturnRate Float // %; lower is better
+  customerRatingAvg  Float // 1-5 scale; higher is better
+
+  // Compliance
+  documentationComplianceRate Float // %; higher is better
+  regulatoryViolationsCount   Int // count; lower is better
+  certificationValidity       Float // % of required certifications valid; higher is better
+}

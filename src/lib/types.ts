@@ -1,5 +1,5 @@
-import type { MetricSnapshotModel, SupplierModel } from "@/generated/prisma/models";
+import type { MetricSnapshot, Supplier } from "@prisma/client";
 
-export type SupplierWithSnapshot = SupplierModel & {
-  snapshot: MetricSnapshotModel | null;
+export type SupplierWithSnapshot = Supplier & {
+  snapshot: MetricSnapshot | null;
 };

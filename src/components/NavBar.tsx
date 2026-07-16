@@ -12,10 +12,15 @@ export function NavBar() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-4">
-        <span className="font-semibold text-slate-900">SupplierPulse</span>
-        <nav className="flex gap-4 text-sm">
+    <header className="px-6 pt-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-2xl border border-border bg-surface px-5 py-3 shadow-sm">
+        <div className="flex items-center gap-3">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-sm font-bold text-accent-ink">
+            SP
+          </span>
+          <span className="font-display text-lg font-semibold text-ink">SupplierPulse</span>
+        </div>
+        <nav className="flex gap-1 rounded-full border border-border bg-surface-2 p-1 text-sm">
           {LINKS.map((link) => {
             const active = pathname === link.href;
             return (
@@ -24,8 +29,8 @@ export function NavBar() {
                 href={link.href}
                 className={
                   active
-                    ? "font-medium text-slate-900"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "rounded-full bg-accent px-4 py-1.5 font-semibold text-accent-ink"
+                    : "rounded-full px-4 py-1.5 text-ink-soft hover:text-ink"
                 }
               >
                 {link.label}

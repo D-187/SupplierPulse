@@ -40,18 +40,18 @@ export default function AdminPage() {
   }
 
   if (loading) {
-    return <div className="px-6 py-16 text-center text-slate-500">Loading…</div>;
+    return <div className="px-6 py-16 text-center text-ink-faint">Loading…</div>;
   }
 
   if (error) {
-    return <div className="px-6 py-16 text-center text-rose-700">{error}</div>;
+    return <div className="px-6 py-16 text-center text-risk-fg">{error}</div>;
   }
 
   if (suppliers.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-6 py-16 text-center">
-        <p className="text-slate-600">Upload supplier data first.</p>
-        <Link href="/" className="mt-4 inline-block text-sm underline">
+        <p className="text-ink-soft">Upload supplier data first.</p>
+        <Link href="/" className="mt-4 inline-block text-sm text-ink-soft underline">
           ← Back to dashboard
         </Link>
       </div>
@@ -60,21 +60,21 @@ export default function AdminPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-2xl font-semibold text-slate-900">Live weight admin panel</h1>
-      <p className="mt-2 text-sm text-slate-600">
+      <h1 className="font-display text-2xl font-semibold text-ink">Live weight admin panel</h1>
+      <p className="mt-2 text-sm text-ink-soft">
         Adjust each category&apos;s weight and watch tiers recompute instantly, against the data
         already loaded — no re-fetch.
       </p>
 
-      <div className="mt-8 grid gap-8 sm:grid-cols-2">
-        <div className="space-y-6 rounded-lg border border-slate-200 bg-white p-6">
+      <div className="mt-8 grid gap-5 sm:grid-cols-2">
+        <div className="space-y-6 rounded-2xl border border-border bg-surface p-6 shadow-sm">
           {CATEGORY_KEYS.map((key) => (
             <div key={key}>
               <div className="flex items-center justify-between text-sm">
-                <label htmlFor={key} className="font-medium text-slate-700">
+                <label htmlFor={key} className="font-medium text-ink">
                   {CATEGORY_LABELS[key]}
                 </label>
-                <span className="text-slate-500">{weights[key]}</span>
+                <span className="font-mono text-ink-soft tabular-nums">{weights[key]}</span>
               </div>
               <input
                 id={key}
@@ -83,56 +83,56 @@ export default function AdminPage() {
                 max={100}
                 value={weights[key]}
                 onChange={(e) => updateWeight(key, Number(e.target.value))}
-                className="mt-2 w-full accent-slate-900"
+                className="mt-2 w-full accent-accent"
               />
             </div>
           ))}
 
-          <div className="flex items-center justify-between border-t border-slate-100 pt-4 text-sm">
-            <span className="text-slate-500">Total weight (normalized automatically)</span>
-            <span className="font-medium text-slate-900">{totalWeight}</span>
+          <div className="flex items-center justify-between border-t border-border pt-4 text-sm">
+            <span className="text-ink-faint">Total weight (normalized automatically)</span>
+            <span className="font-mono font-medium text-ink tabular-nums">{totalWeight}</span>
           </div>
 
           <button
             onClick={() => setWeights(DEFAULT_WEIGHTS)}
-            className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-100"
+            className="w-full rounded-md border border-border px-3 py-1.5 text-sm text-ink-soft hover:bg-surface-2"
           >
             Reset to defaults
           </button>
         </div>
 
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="text-sm font-medium text-slate-500">Tier counts</h2>
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+          <h2 className="text-xs font-semibold tracking-wide text-ink-soft uppercase">Tier counts</h2>
           <div className="mt-4 space-y-3">
             {TIER_ORDER.map((tier) => (
               <div key={tier} className="flex items-center justify-between">
                 <TierBadge tier={tier} />
-                <span className="text-2xl font-semibold text-slate-900">{tierCounts[tier]}</span>
+                <span className="font-display text-2xl font-semibold text-ink">{tierCounts[tier]}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-lg border border-slate-200 bg-white">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
+        <table className="min-w-full divide-y divide-border text-sm">
           <thead>
-            <tr className="text-left text-slate-500">
+            <tr className="text-left text-ink-faint">
               <th className="px-4 py-3 font-medium">Supplier</th>
               <th className="px-4 py-3 font-medium">Overall score</th>
               <th className="px-4 py-3 font-medium">Tier</th>
               <th className="px-4 py-3 font-medium">Routing</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border">
             {scored.map(({ supplier, score }) => (
               <tr key={supplier.id}>
-                <td className="px-4 py-3 font-medium text-slate-900">{supplier.name}</td>
-                <td className="px-4 py-3 text-slate-700">{score.overallScore.toFixed(1)}</td>
+                <td className="px-4 py-3 font-medium text-ink">{supplier.name}</td>
+                <td className="px-4 py-3 font-mono text-ink-soft tabular-nums">{score.overallScore.toFixed(1)}</td>
                 <td className="px-4 py-3">
                   <TierBadge tier={score.tier} />
                 </td>
-                <td className="px-4 py-3 text-slate-600">{ROUTING_LABELS[score.routing]}</td>
+                <td className="px-4 py-3 text-ink-soft">{ROUTING_LABELS[score.routing]}</td>
               </tr>
             ))}
           </tbody>

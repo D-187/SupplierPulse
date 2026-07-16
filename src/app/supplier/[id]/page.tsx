@@ -282,7 +282,46 @@ export default function SupplierDetailPage() {
 
         <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
           <h2 className="text-xs font-semibold tracking-wide text-ink-soft uppercase">Routing outcome</h2>
-          <p className="mt-2 font-display text-lg font-semibold text-ink">{ROUTING_LABELS[score.routing]}</p>
+          <div className="mt-3 flex items-center gap-3">
+            <span
+              className={`flex h-11 w-11 flex-none items-center justify-center rounded-full border-2 ${
+                score.routing === "eligible"
+                  ? "border-healthy-fg/40 bg-healthy-bg text-healthy-fg"
+                  : "border-watch-fg/40 bg-watch-bg text-watch-fg"
+              }`}
+            >
+              {score.routing === "eligible" ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="M13 6l6 6-6 6" />
+                </svg>
+              )}
+            </span>
+            <p className="font-display text-lg font-semibold text-ink">{ROUTING_LABELS[score.routing]}</p>
+          </div>
+
+          <ul className="mt-4 space-y-1.5 text-sm">
+            <li className="flex items-start gap-2">
+              <span className={score.routing === "eligible" ? "text-healthy-fg" : "text-risk-fg"}>
+                {score.routing === "eligible" ? "✓" : "✕"}
+              </span>
+              <span className="text-ink-soft">
+                Overall score {score.overallScore.toFixed(1)}{" "}
+                {score.routing === "eligible" ? "clears" : "is below"} the Healthy threshold (
+                {TIER_THRESHOLDS.healthy})
+              </span>
+            </li>
+            {score.routing === "coaching" && (
+              <li className="flex items-start gap-2">
+                <span className="text-watch-fg">✓</span>
+                <span className="text-ink-soft">Weakest metric identified: {score.weakestMetric.label}</span>
+              </li>
+            )}
+          </ul>
         </div>
       </section>
 

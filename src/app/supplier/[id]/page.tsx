@@ -3,9 +3,11 @@
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import type { DriveStep } from "driver.js";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useSupplierData } from "@/context/SupplierDataContext";
 import { TierBadge } from "@/components/TierBadge";
+import { TourButton } from "@/components/TourButton";
 import {
   CATEGORY_LABELS,
   DEFAULT_WEIGHTS,
@@ -13,7 +15,44 @@ import {
   ROUTING_LABELS,
   scoreSupplier,
   type CategoryKey,
+  type SupplierScore,
 } from "@/lib/scoring";
+
+function buildDetailTourSteps(score: SupplierScore): DriveStep[] {
+  const steps: DriveStep[] = [
+    {
+      element: '[data-tour="score"]',
+      popover: {
+        title: "Overall score & tier",
+        description: "The single number and tier this supplier lands on today.",
+      },
+    },
+    {
+      element: '[data-tour="chart"]',
+      popover: {
+        title: "Category breakdown",
+        description: "How they scored across financial reliability, operations, quality, and compliance.",
+      },
+    },
+    {
+      element: '[data-tour="weakest"]',
+      popover: {
+        title: "Weakest metric",
+        description: "The one metric dragging their overall score down the most.",
+      },
+    },
+  ];
+  if (score.coachingMessage) {
+    steps.push({
+      element: '[data-tour="coaching"]',
+      popover: {
+        title: "Coaching message",
+        description: "A scripted message tied directly to the weakest metric — this is what a Watch/At-risk supplier sees.",
+      },
+    });
+  }
+  return steps;
+}
 
 export default function SupplierDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -55,17 +94,20 @@ export default function SupplierDetailPage() {
         ← Back to dashboard
       </Link>
 
-      <div className="mt-3 flex items-center gap-3">
-        <h1 className="font-display text-2xl font-semibold text-ink">{supplier.name}</h1>
-        <TierBadge tier={score.tier} />
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <h1 className="font-display text-2xl font-semibold text-ink">{supplier.name}</h1>
+          <TierBadge tier={score.tier} />
+        </div>
+        <TourButton steps={buildDetailTourSteps(score)} label="Tour this page" />
       </div>
 
-      <div className="mt-1 flex items-baseline gap-2">
+      <div data-tour="score" className="mt-1 flex items-baseline gap-2">
         <span className="font-display text-4xl font-semibold text-ink">{score.overallScore.toFixed(1)}</span>
         <span className="text-sm text-ink-faint">overall score / 100</span>
       </div>
 
-      <section className="mt-8 rounded-2xl border border-border bg-surface p-6 shadow-sm">
+      <section data-tour="chart" className="mt-8 rounded-2xl border border-border bg-surface p-6 shadow-sm">
         <h2 className="text-xs font-semibold tracking-wide text-ink-soft uppercase">Category breakdown</h2>
         <div className="mt-4 h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -86,7 +128,7 @@ export default function SupplierDetailPage() {
       </section>
 
       <section className="mt-6 grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <div data-tour="weakest" className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
           <h2 className="text-xs font-semibold tracking-wide text-ink-soft uppercase">Weakest metric</h2>
           <p className="mt-2 font-display text-lg font-semibold text-ink">{score.weakestMetric.label}</p>
           <p className="text-sm text-ink-faint">
@@ -101,7 +143,7 @@ export default function SupplierDetailPage() {
       </section>
 
       {score.coachingMessage && (
-        <section className="mt-6 rounded-2xl border border-watch-fg/30 bg-watch-bg p-6">
+        <section data-tour="coaching" className="mt-6 rounded-2xl border border-watch-fg/30 bg-watch-bg p-6">
           <h2 className="text-xs font-semibold tracking-wide text-watch-fg uppercase">Coaching message</h2>
           <p className="mt-2 text-watch-fg">{score.coachingMessage}</p>
         </section>

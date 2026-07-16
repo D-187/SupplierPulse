@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import type { DriveStep } from "driver.js";
 import { useSupplierData } from "@/context/SupplierDataContext";
 import { TierBadge } from "@/components/TierBadge";
+import { TourButton } from "@/components/TourButton";
 import {
   CATEGORY_LABELS,
   DEFAULT_WEIGHTS,
@@ -16,6 +18,30 @@ import {
 
 const CATEGORY_KEYS = Object.keys(CATEGORY_LABELS) as CategoryKey[];
 const TIER_ORDER: Tier[] = ["Healthy", "Watch", "At-risk"];
+
+const ADMIN_TOUR_STEPS: DriveStep[] = [
+  {
+    element: '[data-tour="sliders"]',
+    popover: {
+      title: "Adjust category weights",
+      description: "Drag any slider to change how much that category counts toward the overall score.",
+    },
+  },
+  {
+    element: '[data-tour="tier-counts"]',
+    popover: {
+      title: "Live tier counts",
+      description: "Watch these numbers shift instantly as you move a slider — no page reload, no re-fetch.",
+    },
+  },
+  {
+    element: '[data-tour="admin-table"]',
+    popover: {
+      title: "Full recompute",
+      description: "Every supplier's score, tier, and routing, recalculated live against your current weights.",
+    },
+  },
+];
 
 export default function AdminPage() {
   const { suppliers, loading, error } = useSupplierData();
@@ -60,14 +86,19 @@ export default function AdminPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="font-display text-2xl font-semibold text-ink">Live weight admin panel</h1>
-      <p className="mt-2 text-sm text-ink-soft">
-        Adjust each category&apos;s weight and watch tiers recompute instantly, against the data
-        already loaded — no re-fetch.
-      </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl font-semibold text-ink">Live weight admin panel</h1>
+          <p className="mt-2 text-sm text-ink-soft">
+            Adjust each category&apos;s weight and watch tiers recompute instantly, against the data
+            already loaded — no re-fetch.
+          </p>
+        </div>
+        <TourButton steps={ADMIN_TOUR_STEPS} autoStartKey="admin" />
+      </div>
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2">
-        <div className="space-y-6 rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <div data-tour="sliders" className="space-y-6 rounded-2xl border border-border bg-surface p-6 shadow-sm">
           {CATEGORY_KEYS.map((key) => (
             <div key={key}>
               <div className="flex items-center justify-between text-sm">
@@ -101,7 +132,7 @@ export default function AdminPage() {
           </button>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <div data-tour="tier-counts" className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
           <h2 className="text-xs font-semibold tracking-wide text-ink-soft uppercase">Tier counts</h2>
           <div className="mt-4 space-y-3">
             {TIER_ORDER.map((tier) => (
@@ -114,7 +145,7 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
+      <div data-tour="admin-table" className="mt-8 overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
         <table className="min-w-full divide-y divide-border text-sm">
           <thead>
             <tr className="text-left text-ink-faint">

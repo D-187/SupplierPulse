@@ -2,14 +2,61 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import type { DriveStep } from "driver.js";
 import { useSupplierData } from "@/context/SupplierDataContext";
 import { UploadScreen } from "@/components/UploadScreen";
 import { TierBadge } from "@/components/TierBadge";
+import { TourButton } from "@/components/TourButton";
 import { DEFAULT_WEIGHTS, ROUTING_LABELS, scoreSupplier, type Tier } from "@/lib/scoring";
 
 type SortKey = "name" | "overallScore" | "tier";
 
 const TIER_SORT_ORDER: Record<Tier, number> = { "At-risk": 0, Watch: 1, Healthy: 2 };
+
+const DASHBOARD_TOUR_STEPS: DriveStep[] = [
+  {
+    element: '[data-tour="stats"]',
+    popover: {
+      title: "The pulse at a glance",
+      description: "Total suppliers scored, how the tier mix breaks down, and how many are queued for coaching.",
+    },
+  },
+  {
+    element: '[data-tour="filters"]',
+    popover: {
+      title: "Search & filter",
+      description: "Search by name, or filter the table down to just one tier.",
+    },
+  },
+  {
+    element: '[data-tour="table"]',
+    popover: {
+      title: "Sortable supplier table",
+      description: "Click any column header to sort. Click a supplier's name to see their full score breakdown.",
+    },
+  },
+  {
+    element: '[data-tour="rail"]',
+    popover: {
+      title: "Needs attention",
+      description: "Every Watch or At-risk supplier, most urgent first, with their single weakest metric called out.",
+    },
+  },
+  {
+    element: '[data-tour="upload-btn"]',
+    popover: {
+      title: "Upload new data",
+      description: "Upload a new .xlsx file any time — it replaces the current dataset.",
+    },
+  },
+  {
+    element: '[data-tour="nav-admin"]',
+    popover: {
+      title: "Try the weight admin panel",
+      description: "Head here next — drag the category weight sliders and watch every tier recompute instantly.",
+    },
+  },
+];
 
 export default function DashboardPage() {
   const { suppliers, loading, error, refetch } = useSupplierData();
@@ -103,15 +150,19 @@ export default function DashboardPage() {
     <div className="mx-auto max-w-6xl px-6 py-10">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-semibold text-ink">Supplier dashboard</h1>
-        <button
-          onClick={() => setShowUpload(true)}
-          className="rounded-md border border-border px-3 py-1.5 text-sm text-ink-soft hover:bg-surface-2"
-        >
-          Upload new file
-        </button>
+        <div className="flex items-center gap-2">
+          <TourButton steps={DASHBOARD_TOUR_STEPS} autoStartKey="dashboard" />
+          <button
+            data-tour="upload-btn"
+            onClick={() => setShowUpload(true)}
+            className="rounded-md border border-border px-3 py-1.5 text-sm text-ink-soft hover:bg-surface-2"
+          >
+            Upload new file
+          </button>
+        </div>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+      <div data-tour="stats" className="mt-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
           <div className="text-xs font-semibold tracking-wide text-ink-soft uppercase">Suppliers scored</div>
           <div className="mt-2 font-display text-3xl font-semibold text-ink">{total}</div>
@@ -150,7 +201,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-3">
+      <div data-tour="filters" className="mt-8 flex flex-wrap items-center gap-3">
         <input
           type="text"
           placeholder="Search supplier name…"
@@ -179,7 +230,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-[2.1fr_1fr] lg:items-start">
-        <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
+        <div data-tour="table" className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-sm">
           <table className="min-w-full divide-y divide-border text-sm">
             <thead>
               <tr className="text-left text-ink-faint">
@@ -221,7 +272,7 @@ export default function DashboardPage() {
           </table>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface shadow-sm">
+        <div data-tour="rail" className="rounded-2xl border border-border bg-surface shadow-sm">
           <div className="border-b border-border px-5 py-4">
             <span className="font-display text-base font-semibold text-ink">Needs attention</span>
           </div>

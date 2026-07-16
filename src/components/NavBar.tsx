@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/", label: "Dashboard" },
-  { href: "/admin", label: "Weight admin" },
+  { href: "/", label: "Dashboard", tourId: "nav-dashboard" },
+  { href: "/admin", label: "Weight admin", tourId: "nav-admin" },
 ];
 
 export function NavBar() {
@@ -27,6 +27,7 @@ export function NavBar() {
               <Link
                 key={link.href}
                 href={link.href}
+                data-tour={link.tourId}
                 className={
                   active
                     ? "rounded-full bg-accent px-4 py-1.5 font-semibold text-accent-ink"

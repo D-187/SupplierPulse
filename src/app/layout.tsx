@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
+import "driver.js/dist/driver.css";
 import "./globals.css";
 import { SupplierDataProvider } from "@/context/SupplierDataContext";
 import { NavBar } from "@/components/NavBar";
